@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador de Remuneração - Judiciário/MPU</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Simulador de Remuneração Judiciário/MPU</h1>
+      <p>Preencha os campos abaixo para simular sua atual remuneração e possíveis reajustes.</p>
+    </div>
+    <div class="content">
+      <div class="form-section">
+        <h2>Dados do Servidor</h2>
+        <div class="form-group">
+          <label>Órgão:</label>
+          <div class="radio-group">
+            <label><input type="radio" name="orgao" value="judiciario" checked> Judiciário</label>
+            <label><input type="radio" name="orgao" value="mpu"> MPU</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Status:</label>
+          <div class="radio-group">
+            <label><input type="radio" name="status" value="ativo" checked> Ativo</label>
+            <label><input type="radio" name="status" value="aposentado"> Aposentado</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="cargo">Cargo:</label>
+          <select id="cargo">
+            <option>Analista</option>
+            <option>Analista TI</option>
+            <option>Oficial de Justiça</option>
+            <option>Técnico</option>
+            <option>Técnico TI</option>
+            <option selected>Agente de Polícia</option>
+            <option>Inspetor de Polícia</option>
+            <option>Auxiliar</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="classe">Classe/Padrão:</label>
+          <select id="classe">
+            <option value="13" selected>13</option>
+            <option value="12">12</option>
+            <option value="11">11</option>
+            <option value="10">10</option>
+            <option value="9">9</option>
+            <option value="8">8</option>
+            <option value="7">7</option>
+            <option value="6">6</option>
+            <option value="5">5</option>
+            <option value="4">4</option>
+            <option value="3">3</option>
+            <option value="2">2</option>
+            <option value="1">1</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="funcaoComissionada">Função Comissionada:</label>
+          <select id="funcaoComissionada">
+            <option value="0">Nenhuma</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="penosidade">Periculosidade ou Insalubridade (%):</label>
+          <select id="penosidade">
+            <option value="0">0%</option>
+            <option value="0.10">10%</option>
+            <option value="0.20">20%</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Regime Previdenciário:</label>
+          <div class="radio-group">
+            <label><input type="radio" name="funpresp" value="nao" checked> RPPS</label>
+            <label><input type="radio" name="funpresp" value="sim"> RGPS (Funpresp-Jud)</label>
+          </div>
+        </div>
+        <div class="form-group" id="contribuicao-patrocinada-group" style="display:none;">
+          <label for="contribuicaoPatrocinada">Contribuição Patrocinada (%):</label>
+          <select id="contribuicaoPatrocinada">
+            <option value="0">0%</option>
+            <option value="6.5">6,5%</option>
+            <option value="7">7%</option>
+            <option value="7.5">7,5%</option>
+            <option value="8">8%</option>
+            <option value="8.5">8,5%</option>
+          </select>
+        </div>
+        <div class="form-group" id="contribuicao-facultativa-group" style="display:none;">
+          <label for="contribuicaoFacultativa">Contribuição Facultativa (%):</label>
+          <input type="number" id="contribuicaoFacultativa" min="0" max="20" step="0.1" value="0">
+        </div>
+        <div class="form-group">
+          <label for="ats">ATS (%):</label>
+          <input type="number" id="ats" min="0" max="35" step="0.1" value="0">
+        </div>
+        <div class="form-group">
+          <label for="vpni">VPNI (R$):</label>
+          <input type="number" id="vpni" min="0" step="0.01" value="0">
+        </div>
+        <div class="form-group">
+          <label for="auxilioCreche">Auxílio Pré-Escolar:</label>
+          <input type="number" id="auxilioCreche" min="0" max="10" step="1" value="1">
+        </div>
+        <div class="form-group">
+          <label for="dependentesIRRF">Dependentes IRRF:</label>
+          <input type="number" id="dependentesIRRF" min="0" max="10" step="1" value="2">
+        </div>
+        <div class="form-group">
+          <label>Abono de Permanência:</label>
+          <div class="radio-group">
+            <label><input type="radio" name="abonoPermanencia" value="nao" checked> Não</label>
+            <label><input type="radio" name="abonoPermanencia" value="sim"> Sim</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Outros Descontos:</label>
+          <div id="outros-descontos-list"></div>
+          <button type="button" class="btn-add" id="add-desconto">Adicionar Desconto</button>
+        </div>
+      </div>
+      <div class="novo-aq-section">
+        <h4>🎓 Formação e Qualificação</h4>
+        <p class="aq-description">Configure sua formação acadêmica e qualificações para o cálculo do Novo AQ</p>
+        <div class="novo-aq-grid">
+          <div class="novo-aq-item" data-tooltip="Graduação em curso superior completo">
+            <div class="aq-item-header">
+              <span class="aq-icon">🎓</span>
+              <label for="qual_graduacao">Graduação</label>
+            </div>
+            <select id="qual_graduacao" class="aq-select">
+              <option value="0">0</option>
+              <option value="1" selected>1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+            </select>
+          </div>
+          <div class="novo-aq-item" data-tooltip="Certificações técnicas e profissionais">
+            <div class="aq-item-header">
+              <span class="aq-icon">🏆</span>
+              <label for="qual_certificacoes">Certificações</label>
+            </div>
+            <select id="qual_certificacoes" class="aq-select">
+              <option value="0">0</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+            </select>
+          </div>
+          <div class="novo-aq-item" data-tooltip="Especialização ou pós-graduação lato sensu">
+            <div class="aq-item-header">
+              <span class="aq-icon">📚</span>
+              <label for="qual_especializacao">Especialização</label>
+            </div>
+            <select id="qual_especializacao" class="aq-select">
+              <option value="0">0</option>
+              <option value="1">1</option>
+              <option value="2" selected>2</option>
+              <option value="3">3</option>
+            </select>
+          </div>
+          <div class="novo-aq-item" data-tooltip="Mestrado acadêmico ou profissional">
+            <div class="aq-item-header">
+              <span class="aq-icon">🎯</span>
+              <label for="qual_mestrado">Mestrado</label>
+            </div>
+            <select id="qual_mestrado" class="aq-select">
+              <option value="0">0</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+            </select>
+          </div>
+          <div class="novo-aq-item" data-tooltip="Doutorado acadêmico">
+            <div class="aq-item-header">
+              <span class="aq-icon">👨‍🎓</span>
+              <label for="qual_doutorado">Doutorado</label>
+            </div>
+            <select id="qual_doutorado" class="aq-select">
+              <option value="0">0</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+            </select>
+          </div>
+          <div class="novo-aq-item" data-tooltip="Cursos de treinamento e capacitação">
+            <div class="aq-item-header">
+              <span class="aq-icon">📖</span>
+              <label for="qual_treinamento">Treinamentos</label>
+            </div>
+            <select id="qual_treinamento" class="aq-select">
+              <option value="0">0</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3" selected>3</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="results-section">
+        <div class="result-card">
+          <h3>Situação Atual</h3>
+          <div class="result-card-content" id="resultado-atual">
+            Preencha os dados para ver os resultados...
+          </div>
+        </div>
+        <div class="result-card">
+          <h3 id="gaj-card-title">Propostas de reajustes</h3>
+          <div class="gaj-select-container">
+            <div>
+              <input type="radio" name="gajOption" id="gaj165" value="1.65" checked>
+              <label for="gaj165">GAJ 165% + 5% no vencimento + Novo AQ</label>
+            </div>
+            <div>
+              <input type="radio" name="gajOption" id="gaj165SemAQ" value="gaj165SemAQ">
+              <label for="gaj165SemAQ">GAJ 165% + 5% no vencimento</label>
+            </div>
+            <div>
+              <input type="radio" name="gajOption" id="apenasGajAumento" value="apenas5">
+              <label for="apenasGajAumento">5% no vencimento + Novo AQ</label>
+            </div>
+            <div>
+              <input type="radio" name="gajOption" id="novoAQ" value="novoAQ">
+              <label for="novoAQ">Novo AQ</label>
+            </div>
+          </div>
+          <select id="gajMajoradaPercent" style="display: none;">
+            <option value="1.65">165%</option>
+            <option value="1.40">140%</option>
+          </select>
+          <div class="result-card-content" id="resultado-gaj-conteudo">
+            <div id="resultado-gaj-conteudo-inner">
+              Preencha os dados para ver os resultados...
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
