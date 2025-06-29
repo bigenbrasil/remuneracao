@@ -61,40 +61,11 @@ function addDesconto() {
 }
 
 function getFormValues() {
-    // Verificações de existência dos campos
-    const orgaoRadio = document.querySelector('input[name="orgao"]:checked');
-    const cargoSelect = document.getElementById('cargo');
-    const classeSelect = document.getElementById('classe');
-    const funcaoComissionadaSelect = document.getElementById('funcaoComissionada');
-    const statusRadio = document.querySelector('input[name="status"]:checked');
-    const penosidadeSelect = document.getElementById('penosidade');
-    const qualGraduacao = document.getElementById('qual_graduacao');
-    const qualCertificacoes = document.getElementById('qual_certificacoes');
-    const qualEspecializacao = document.getElementById('qual_especializacao');
-    const qualMestrado = document.getElementById('qual_mestrado');
-    const qualDoutorado = document.getElementById('qual_doutorado');
-    const qualTreinamento = document.getElementById('qual_treinamento');
-    const atsInput = document.getElementById('ats');
-    const vpniInput = document.getElementById('vpni');
-    const auxilioCrecheInput = document.getElementById('auxilioCreche');
-    const dependentesIRRFInput = document.getElementById('dependentesIRRF');
-    const contribuicaoPatrocinada = document.getElementById('contribuicaoPatrocinada');
-    const contribuicaoFacultativa = document.getElementById('contribuicaoFacultativa');
-    const abonoPermanenciaRadio = document.querySelector('input[name="abonoPermanencia"]:checked');
-    const gajMajoradaPercent = document.getElementById('gajMajoradaPercent');
-
-    if (!orgaoRadio || !cargoSelect || !classeSelect || !funcaoComissionadaSelect || !statusRadio ||
-        !penosidadeSelect || !qualGraduacao || !qualCertificacoes || !qualEspecializacao || !qualMestrado || !qualDoutorado || !qualTreinamento ||
-        !atsInput || !vpniInput || !auxilioCrecheInput || !dependentesIRRFInput || !contribuicaoPatrocinada || !contribuicaoFacultativa || !abonoPermanenciaRadio || !gajMajoradaPercent) {
-        throw new Error('Um ou mais campos obrigatórios não estão presentes no formulário.');
-    }
-
-    // Agora pode acessar .value com segurança
-    const orgao = orgaoRadio.value;
-    const cargo = cargoSelect.value;
-    const classe = parseInt(classeSelect.value);
-    const funcaoComissionadaValor = parseFloat(funcaoComissionadaSelect.value) || 0;
-    const isAtivo = statusRadio.value === 'ativo';
+    const orgao = document.querySelector('input[name="orgao"]:checked').value;
+    const cargo = document.getElementById('cargo').value;
+    const classe = parseInt(document.getElementById('classe').value);
+    const funcaoComissionadaValor = parseFloat(document.getElementById('funcaoComissionada').value) || 0;
+    const isAtivo = document.querySelector('input[name="status"]:checked').value === 'ativo';
     const isJudiciario = orgao === 'judiciario';
 
     let gas = 0, gae = 0;
@@ -127,24 +98,24 @@ function getFormValues() {
         classe,
         vencimentoBasico,
         funcaoComissionada: funcaoComissionadaValor,
-        penosidade: parseFloat(penosidadeSelect.value) || 0,
-        qual_graduacao: parseInt(qualGraduacao.value) || 0,
-        qual_certificacoes: parseInt(qualCertificacoes.value) || 0,
-        qual_especializacao: parseInt(qualEspecializacao.value) || 0,
-        qual_mestrado: parseInt(qualMestrado.value) || 0,
-        qual_doutorado: parseInt(qualDoutorado.value) || 0,
-        qual_treinamento: parseInt(qualTreinamento.value) || 0,
-        ats: parseFloat(atsInput.value) || 0,
-        vpni: parseFloat(vpniInput.value) || 0,
-        auxilioCreche: parseInt(auxilioCrecheInput.value) || 0,
-        dependentesIRRF: parseInt(dependentesIRRFInput.value) || 0,
-        contribuicaoPatrocinada: parseFloat(contribuicaoPatrocinada.value) || 0,
-        contribuicaoFacultativa: parseFloat(contribuicaoFacultativa.value) || 0,
-        abonoPermanencia: abonoPermanenciaRadio.value,
+        penosidade: parseFloat(document.getElementById('penosidade').value) || 0,
+        qual_graduacao: parseInt(document.getElementById('qual_graduacao').value) || 0,
+        qual_certificacoes: parseInt(document.getElementById('qual_certificacoes').value) || 0,
+        qual_especializacao: parseInt(document.getElementById('qual_especializacao').value) || 0,
+        qual_mestrado: parseInt(document.getElementById('qual_mestrado').value) || 0,
+        qual_doutorado: parseInt(document.getElementById('qual_doutorado').value) || 0,
+        qual_treinamento: parseInt(document.getElementById('qual_treinamento').value) || 0,
+        ats: parseFloat(document.getElementById('ats').value) || 0,
+        vpni: parseFloat(document.getElementById('vpni').value) || 0,
+        auxilioCreche: parseInt(document.getElementById('auxilioCreche').value) || 0,
+        dependentesIRRF: parseInt(document.getElementById('dependentesIRRF').value) || 0,
+        contribuicaoPatrocinada: parseFloat(document.getElementById('contribuicaoPatrocinada').value) || 0,
+        contribuicaoFacultativa: parseFloat(document.getElementById('contribuicaoFacultativa').value) || 0,
+        abonoPermanencia: document.querySelector('input[name="abonoPermanencia"]:checked').value,
         gas,
         gae,
         outrosDescontos,
-        gajMajoradaPercent: parseFloat(gajMajoradaPercent.value) || 1.6,
+        gajMajoradaPercent: parseFloat(document.getElementById('gajMajoradaPercent').value) || 1.6,
     };
 }
 
@@ -197,13 +168,14 @@ function calculateSituacaoAtual(inputs) {
     const gaj = vencimentoBasico * 1.40;
     proventos['GAJ (140%)'] = gaj;
 
-    if (funcaoComissionada > 0) proventos['Função de Confiança'] = funcaoComissionada;
     if (gas > 0) proventos['GAS (35%)'] = gas;
     if (gae > 0) proventos['GAE (35%)'] = gae;
+    if (funcaoComissionada > 0) proventos['Função de Confiança'] = funcaoComissionada;
     
     const penosidadeValor = vencimentoBasico * penosidade;
     if (penosidadeValor > 0) proventos['Penosidade'] = penosidadeValor;
     
+    // AQ Antigo (situação atual)
     let aqPercent = 0;
     if (qual_doutorado > 0) aqPercent = 0.125;
     else if (qual_mestrado > 0) aqPercent = 0.10;
@@ -212,6 +184,7 @@ function calculateSituacaoAtual(inputs) {
     const valorAQ = vencimentoBasico * aqPercent;
     if (valorAQ > 0) proventos['Adicional de Qualificação'] = valorAQ;
 
+    // AT Antigo (situação atual)
     let atPercent = 0;
     if (status === 'ativo') {
         if (orgao === 'judiciario') {
@@ -243,7 +216,7 @@ function calculateSituacaoAtual(inputs) {
 
     if (contribuicaoPatrocinada > 0) {
         const tetoINSS = 8157.41;
-        const salarioBruto = vencimentoBasico + gaj + funcaoComissionada + gae + penosidadeValor + valorAQ + atsValor + vpni;
+        const salarioBruto = baseCalculoPSS;
         const baseFunpresp = Math.max(0, salarioBruto - tetoINSS);
         const contribPatrocinada = baseFunpresp * (contribuicaoPatrocinada / 100);
         descontos[`Contribuição Patrocinada (${contribuicaoPatrocinada}%)`] = contribPatrocinada;
@@ -251,13 +224,13 @@ function calculateSituacaoAtual(inputs) {
 
     if (contribuicaoFacultativa > 0) {
         const tetoINSS = 8157.41;
-        const salarioBruto = vencimentoBasico + gaj + funcaoComissionada + gae + penosidadeValor + valorAQ + atsValor + vpni;
+        const salarioBruto = baseCalculoPSS;
         const baseFunpresp = Math.max(0, salarioBruto - tetoINSS);
         const contribFacultativa = baseFunpresp * (contribuicaoFacultativa / 100);
         descontos[`Contribuição Facultativa (${contribuicaoFacultativa}%)`] = contribFacultativa;
     }
 
-    if (abonoPermanencia === 'sim' && status === 'ativo') {
+    if (abonoPermanencia === 'sim' && status === 'aposentado') {
         proventos['Abono de Permanência'] = pss;
         baseCalculoIRPF += pss;
     }
@@ -301,29 +274,53 @@ function calculateSituacaoAtual(inputs) {
 function calculateGajMajorada(inputs, gajOptionValue = null) {
     const { vencimentoBasico, status, funpresp, funcaoComissionada, penosidade, ats, vpni, auxilioCreche, abonoPermanencia, dependentesIRRF, outrosDescontos, gajMajoradaPercent, cargo, contribuicaoPatrocinada, contribuicaoFacultativa, qual_graduacao, qual_certificacoes, qual_especializacao, qual_mestrado, qual_doutorado, qual_treinamento, orgao } = inputs;
     let proventos = {};
-    // Se gajOptionValue for passado, usa ele, senão pega do radio selecionado
+    
     const gajOptionSelecionada = gajOptionValue || document.querySelector('input[name="gajOption"]:checked')?.value;
-    let vencimento, gaj, gas = 0, gae = 0, penosidadeValor = 0, atsValor = 0, valorAQ = 0, valorNovoAQ = 0;
+    let vencimento, gaj, gas = 0, gae = 0, penosidadeValor = 0, atsValor = 0, valorAQ = 0, valorNovoAQ = 0, valorAT = 0;
 
     // 1. GAJ 165% + 5% no vencimento + Novo AQ
     if (gajOptionSelecionada === '1.65') {
         vencimento = vencimentoBasico * 1.05;
         gaj = vencimento * 1.65;
-        proventos['Vencimento Básico (+5%)'] = vencimento;
-        proventos['GAJ (165%)'] = gaj;
+        proventos['Vencimento Básico'] = vencimento;
+        proventos['GAJ (140%)'] = gaj;
     }
     // 2. GAJ 165% + 5% no vencimento
     else if (gajOptionSelecionada === 'gaj165SemAQ') {
         vencimento = vencimentoBasico * 1.05;
         gaj = vencimento * 1.65;
-        proventos['Vencimento Básico (+5%)'] = vencimento;
-        proventos['GAJ (165%)'] = gaj;
+        proventos['Vencimento Básico'] = vencimento;
+        proventos['GAJ (140%)'] = gaj;
+        
+        // AQ Antigo (mantém o AQ antigo em vez do Novo AQ)
+        let aqPercent = 0;
+        if (qual_doutorado > 0) aqPercent = 0.125;
+        else if (qual_mestrado > 0) aqPercent = 0.10;
+        else if (qual_especializacao > 0) aqPercent = 0.075;
+        else if (qual_graduacao > 0) aqPercent = 0.05;
+        valorAQ = vencimento * aqPercent;
+        if (valorAQ > 0) proventos['Adicional de Qualificação'] = valorAQ;
+        
+        // AT Antigo (mantém o AT antigo)
+        let atPercent = 0;
+        if (status === 'ativo') {
+            if (orgao === 'judiciario') {
+                if (qual_treinamento >= 3) atPercent = 0.03;
+                else if (qual_treinamento >= 2) atPercent = 0.02;
+                else if (qual_treinamento >= 1) atPercent = 0.01;
+            } else {
+                if (qual_treinamento >= 2) atPercent = 0.05;
+                else if (qual_treinamento >= 1) atPercent = 0.025;
+            }
+        }
+        valorAT = vencimento * atPercent;
+        if (valorAT > 0) proventos['Adicional de Treinamento'] = valorAT;
     }
     // 3. 5% no vencimento + Novo AQ
     else if (gajOptionSelecionada === 'apenas5') {
         vencimento = vencimentoBasico * 1.05;
-        gaj = vencimentoBasico * 1.40;
-        proventos['Vencimento Básico (+5%)'] = vencimento;
+        gaj = vencimento * 1.40;
+        proventos['Vencimento Básico'] = vencimento;
         proventos['GAJ (140%)'] = gaj;
     }
     // 4. Novo AQ
@@ -358,14 +355,14 @@ function calculateGajMajorada(inputs, gajOptionValue = null) {
     if (atsValor > 0) proventos['ATS'] = atsValor;
     if (vpni > 0) proventos['VPNI'] = vpni;
 
-    // Novo AQ (valorVR já está definido no escopo global)
+    // Novo AQ
     let vrsFinal = 0;
     if (qual_doutorado > 0) {
         vrsFinal = 5;
-        if (qual_treinamento > 0) vrsFinal += Math.min(qual_treinamento, 3) * 0.2;
+        if (status === 'ativo' && qual_treinamento > 0) vrsFinal += Math.min(qual_treinamento, 3) * 0.2;
     } else if (qual_mestrado > 0) {
         vrsFinal = 3.5;
-        if (qual_treinamento > 0) vrsFinal += Math.min(qual_treinamento, 3) * 0.2;
+        if (status === 'ativo' && qual_treinamento > 0) vrsFinal += Math.min(qual_treinamento, 3) * 0.2;
     } else if (qual_graduacao > 0 && ['Técnico', 'Técnico TI', 'Agente de Polícia'].includes(cargo) && qual_especializacao > 0 && qual_treinamento >= 3) {
         vrsFinal = 1 + 1 + 0.6;
     } else if (qual_graduacao > 0 && ['Técnico', 'Técnico TI', 'Agente de Polícia'].includes(cargo) && qual_certificacoes >= 2 && qual_treinamento >= 3) {
@@ -378,10 +375,10 @@ function calculateGajMajorada(inputs, gajOptionValue = null) {
         vrsFinal = 1;
     } else if (qual_especializacao > 0) {
         vrsFinal = Math.min(qual_especializacao, 2);
-        if (qual_treinamento > 0) vrsFinal += Math.min(qual_treinamento, 3) * 0.2;
+        if (status === 'ativo' && qual_treinamento > 0) vrsFinal += Math.min(qual_treinamento, 3) * 0.2;
     } else {
         if (qual_certificacoes > 0) vrsFinal += Math.min(qual_certificacoes, 2) * 0.5;
-        if (qual_treinamento > 0) vrsFinal += Math.min(qual_treinamento, 3) * 0.2;
+        if (status === 'ativo' && qual_treinamento > 0) vrsFinal += Math.min(qual_treinamento, 3) * 0.2;
     }
     valorNovoAQ = vrsFinal * valorVR;
     if (valorNovoAQ > 0 && gajOptionSelecionada !== 'gaj165SemAQ') {
@@ -395,19 +392,15 @@ function calculateGajMajorada(inputs, gajOptionValue = null) {
     // BASES DE CÁLCULO
     let baseCalculoPSS = 0, baseCalculoIRPF = 0;
     if (gajOptionSelecionada === '1.65') {
-        // GAJ 165% + 5% + Novo AQ
         baseCalculoPSS = vencimento + gaj + funcaoComissionada + gae + penosidadeValor + atsValor + vpni + valorNovoAQ;
         baseCalculoIRPF = baseCalculoPSS + gas;
     } else if (gajOptionSelecionada === 'gaj165SemAQ') {
-        // GAJ 165% + 5%
-        baseCalculoPSS = vencimento + gaj + funcaoComissionada + gae + penosidadeValor + atsValor + vpni;
-        baseCalculoIRPF = baseCalculoPSS + gas;
+        baseCalculoPSS = vencimento + gaj + funcaoComissionada + gae + penosidadeValor + atsValor + vpni + valorAQ;
+        baseCalculoIRPF = baseCalculoPSS + gas + valorAT;
     } else if (gajOptionSelecionada === 'apenas5') {
-        // 5% + Novo AQ
         baseCalculoPSS = vencimento + gaj + funcaoComissionada + gae + penosidadeValor + atsValor + vpni + valorNovoAQ;
         baseCalculoIRPF = baseCalculoPSS + gas;
     } else if (gajOptionSelecionada === 'novoAQ') {
-        // Novo AQ
         baseCalculoPSS = vencimento + gaj + funcaoComissionada + gae + penosidadeValor + atsValor + vpni + valorNovoAQ;
         baseCalculoIRPF = baseCalculoPSS + gas;
     }
@@ -432,7 +425,7 @@ function calculateGajMajorada(inputs, gajOptionValue = null) {
         descontos[`Contribuição Facultativa (${contribuicaoFacultativa}%)`] = contribFacultativa;
     }
 
-    if (abonoPermanencia === 'sim' && status === 'ativo') {
+    if (abonoPermanencia === 'sim' && status === 'aposentado') {
         proventos['Abono de Permanência'] = pss;
         baseCalculoIRPF += pss;
     }
@@ -505,60 +498,208 @@ function formatResults(results) {
     return output;
 }
 
+function formatResultsComparativoPropostas(inputs) {
+    // Calcula a situação atual
+    const situacaoAtual = calculateSituacaoAtual(inputs);
+    
+    // Calcula os resultados das 3 propostas
+    const opcoes = [
+        { id: 'gaj165', value: '1.65', label: 'GAJ 165% + 5% + Novo AQ' },
+        { id: 'gaj165SemAQ', value: 'gaj165SemAQ', label: 'GAJ 165% + 5%' },
+        { id: 'novoAQ', value: 'novoAQ', label: 'Novo AQ' }
+    ];
+    const resultados = opcoes.map(opcao => ({
+        label: opcao.label,
+        resultado: calculateGajMajorada(inputs, opcao.value)
+    }));
+    
+    // Descobrir todos os proventos possíveis (incluindo situação atual)
+    const todosProventos = new Set();
+    Object.keys(situacaoAtual.proventos).forEach(p => todosProventos.add(p));
+    resultados.forEach(r => Object.keys(r.resultado.proventos).forEach(p => todosProventos.add(p)));
+    
+    // Montar tabela com estilo profissional e clean
+    let html = '<div style="overflow-x:auto; margin: 20px 0;"><table style="width: 100%; border-collapse: collapse; font-size: 0.9em; color: #333; border: 1px solid #d1d5db; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); background: linear-gradient(135deg, #fafbfc 0%, #f5f7fa 100%);"><thead><tr><th style="text-align:left;padding:12px 16px;font-weight:600;font-size:0.85em;border-bottom:2px solid #e5e7eb;color:#374151;background:#f9fafb;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;">Rubricas</th>';
+    html += `<th style='padding:12px 16px;font-weight:600;font-size:0.85em;border-bottom:2px solid #e5e7eb;color:#374151;text-align:center;line-height:1.4;background:#f9fafb;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;'>Situação Atual</th>`;
+    resultados.forEach((r, index) => {
+        html += `<th style='padding:12px 16px;font-weight:600;font-size:0.85em;border-bottom:2px solid #e5e7eb;color:#374151;text-align:center;line-height:1.4;background:#f9fafb;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;'>${r.label}</th>`;
+    });
+    html += '</tr></thead><tbody>';
+    
+    todosProventos.forEach((provento, index) => {
+        const isEven = index % 2 === 0;
+        const bgColor = isEven ? '#ffffff' : '#fafbfc';
+        const rubricaText = provento === 'GAJ (140%)' ? 'GAJ' : provento;
+        html += `<tr style='background:${bgColor};'><td style='text-align:left;padding:3px 0 3px 12px;font-size:0.95em;color:#666;'>${rubricaText}</td>`;
+        
+        // Situação Atual
+        const valorAtual = situacaoAtual.proventos[provento];
+        const valorAtualFormatado = valorAtual !== undefined ? valorAtual.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : '-';
+        html += `<td style='padding:3px 20px;text-align:right;font-family:monospace;font-size:0.95em;color:#666;'>${valorAtualFormatado}</td>`;
+        
+        // Propostas
+        resultados.forEach(r => {
+            const valor = r.resultado.proventos[provento];
+            const valorFormatado = valor !== undefined ? valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : '-';
+            html += `<td style='padding:3px 20px;text-align:right;font-family:monospace;font-size:0.95em;color:#666;'>${valorFormatado}</td>`;
+        });
+        html += '</tr>';
+    });
+    
+    // Linha divisória antes do Total Proventos
+    html += `<tr><td colspan='${resultados.length + 2}' style='border-bottom:1px solid #eee;height:8px;background:transparent;'></td></tr>`;
+    
+    // Total Proventos
+    html += `<tr><td style='text-align:left;padding:6px 0 6px 12px;font-weight:500;border-top:1px solid #eee;font-size:0.95em;color:#666;'>Total Bruto</td>`;
+    
+    // Total Proventos - Situação Atual
+    const totalAtualFormatado = situacaoAtual.totalProventos.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    html += `<td style='padding:6px 20px;text-align:right;font-weight:500;border-top:1px solid #eee;font-family:monospace;font-size:0.95em;color:#666;'>${totalAtualFormatado}</td>`;
+    
+    // Total Proventos - Propostas
+    resultados.forEach((r, index) => {
+        const valorFormatado = r.resultado.totalProventos.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        html += `<td style='padding:6px 20px;text-align:right;font-weight:500;border-top:1px solid #eee;font-family:monospace;font-size:0.95em;color:#666;'>${valorFormatado}</td>`;
+    });
+    html += '</tr>';
+    
+    // Descontos
+    // Descobrir todos os descontos possíveis
+    const todosDescontos = new Set();
+    Object.keys(situacaoAtual.descontos).forEach(d => todosDescontos.add(d));
+    resultados.forEach(r => Object.keys(r.resultado.descontos).forEach(d => todosDescontos.add(d)));
+    
+    // Linha divisória antes dos Descontos
+    html += `<tr><td colspan='${resultados.length + 2}' style='border-bottom:1px solid #eee;height:12px;background:transparent;'></td></tr>`;
+    
+    // Título Descontos
+    html += `<tr><td colspan='${resultados.length + 2}' style='padding:8px 0 6px 12px;font-weight:500;color:#555;border-bottom:1px solid #eee;font-size:1em;text-align:left;'>Descontos:</td></tr>`;
+    
+    todosDescontos.forEach((desconto, index) => {
+        const isEven = index % 2 === 0;
+        const bgColor = isEven ? '#ffffff' : '#fafbfc';
+        const descontoText = desconto === 'PSS (Progressivo)' ? 'PSS' : desconto;
+        html += `<tr style='background:${bgColor};'><td style='text-align:left;padding:3px 0 3px 12px;font-size:0.95em;color:#666;'>${descontoText}</td>`;
+        
+        // Situação Atual
+        const valorAtual = situacaoAtual.descontos[desconto];
+        const valorAtualFormatado = valorAtual !== undefined ? valorAtual.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : '-';
+        html += `<td style='padding:3px 20px;text-align:right;font-family:monospace;font-size:0.95em;color:#666;'>${valorAtualFormatado}</td>`;
+        
+        // Propostas
+        resultados.forEach(r => {
+            const valor = r.resultado.descontos[desconto];
+            const valorFormatado = valor !== undefined ? valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : '-';
+            html += `<td style='padding:3px 20px;text-align:right;font-family:monospace;font-size:0.95em;color:#666;'>${valorFormatado}</td>`;
+        });
+        html += '</tr>';
+    });
+    
+    // Total Descontos
+    html += `<tr><td style='text-align:left;padding:6px 0 6px 12px;font-weight:500;border-top:1px solid #eee;font-size:0.95em;color:#666;'>Total Descontos</td>`;
+    
+    // Total Descontos - Situação Atual
+    const totalDescontosAtualFormatado = situacaoAtual.totalDescontos.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    html += `<td style='padding:6px 20px;text-align:right;font-weight:500;border-top:1px solid #eee;font-family:monospace;font-size:0.95em;color:#666;'>${totalDescontosAtualFormatado}</td>`;
+    
+    // Total Descontos - Propostas
+    resultados.forEach((r, index) => {
+        const valorFormatado = r.resultado.totalDescontos.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        html += `<td style='padding:6px 20px;text-align:right;font-weight:500;border-top:1px solid #eee;font-family:monospace;font-size:0.95em;color:#666;'>${valorFormatado}</td>`;
+    });
+    html += '</tr>';
+    
+    // Linha divisória antes do Líquido
+    html += `<tr><td colspan='${resultados.length + 2}' style='border-bottom:1px solid #eee;height:12px;background:transparent;'></td></tr>`;
+    
+    // Adicionar linha com Líquido a Receber
+    html += `<tr style='background:#f0f4f8;'><td style='text-align:left;padding:12px 0 12px 12px;font-weight:700;color:#1e3a8a;border-top:2px solid #3b82f6;border-bottom:2px solid #3b82f6;font-size:1em;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;'>Líquido Total</td>`;
+    
+    // Líquido - Situação Atual
+    const liquidoAtualFormatado = situacaoAtual.liquido.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    html += `<td style='padding:12px 20px;text-align:right;font-weight:700;color:#1e3a8a;border-top:2px solid #3b82f6;border-bottom:2px solid #3b82f6;font-family:monospace;font-size:0.95em;'><div style='text-align:right;margin-bottom:4px;height:20px;line-height:20px;'>${liquidoAtualFormatado}</div><div style='text-align:right;font-size:0.8em;color:#1e3a8a;height:16px;line-height:16px;'>&nbsp;</div></td>`;
+    
+    // Líquido - Propostas
+    resultados.forEach((r, index) => {
+        const valorFormatado = r.resultado.liquido.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        const aumento = r.resultado.liquido - situacaoAtual.liquido;
+        const percentual = (aumento / situacaoAtual.liquido) * 100;
+        const aumentoFormatado = aumento.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        const percentualFormatado = percentual.toFixed(1);
+        const sinal = aumento >= 0 ? '+' : '';
+        
+        html += `<td style='padding:12px 20px;text-align:right;font-weight:700;color:#000000;border-top:2px solid #3b82f6;border-bottom:2px solid #3b82f6;font-family:monospace;font-size:0.95em;'><div style='text-align:right;margin-bottom:4px;height:20px;line-height:20px;'>${valorFormatado}</div><div style='text-align:right;font-size:0.7em;color:#666;height:16px;line-height:16px;'>${sinal}${aumentoFormatado} (<span style='color:#059669;'>${sinal}${percentualFormatado}%</span>)</div></td>`;
+    });
+    html += '</tr>';
+    
+    html += '</tbody></table></div>';
+    return html;
+}
+
 function calculateAndDisplay() {
     try {
         const inputs = getFormValues();
         const resultsAtual = calculateSituacaoAtual(inputs);
-        const liquidoAtual = resultsAtual.liquido;
-
-        // Para cada proposta, calcular o líquido e o aumento percentual
-        const opcoes = [
-            { id: 'gaj165', value: '1.65', label: 'GAJ 165% + 5% no vencimento + Novo AQ' },
-            { id: 'gaj165SemAQ', value: 'gaj165SemAQ', label: 'GAJ 165% + 5% no vencimento' },
-            { id: 'apenasGajAumento', value: 'apenas5', label: '5% no vencimento + Novo AQ' },
-            { id: 'novoAQ', value: 'novoAQ', label: 'Novo AQ' }
-        ];
-
-        opcoes.forEach(opcao => {
-            const radio = document.getElementById(opcao.id);
-            const label = document.querySelector('label[for="' + opcao.id + '"]');
-            if (radio && label) {
-                // Simula o cálculo para cada proposta sem alterar o checked
-                let valorGaj = radio.value;
-                if (opcao.id === 'apenasGajAumento') valorGaj = 'apenas5';
-                const resultadoProposta = calculateGajMajorada(getFormValues(), valorGaj);
-                const liquidoProposta = resultadoProposta.liquido;
-                const brutoProposta = resultadoProposta.totalProventos;
-                let aumentoLiquido = 0;
-                let aumentoBruto = 0;
-                if (liquidoAtual > 0) {
-                    aumentoLiquido = ((liquidoProposta - liquidoAtual) / liquidoAtual) * 100;
-                }
-                if (resultsAtual.totalProventos > 0) {
-                    aumentoBruto = ((brutoProposta - resultsAtual.totalProventos) / resultsAtual.totalProventos) * 100;
-                }
-                let textoAumento = '';
-                if (!isNaN(aumentoLiquido) && isFinite(aumentoLiquido) && !isNaN(aumentoBruto) && isFinite(aumentoBruto)) {
-                    textoAumento = `<span class='percent-aumento'><span class='percent-liquido'>Líquido: +${aumentoLiquido.toFixed(1)}%</span><span class='percent-sep'>|</span><span class='percent-bruto'>Bruto: +${aumentoBruto.toFixed(1)}%</span></span>`;
-                }
-                label.innerHTML = `<span class='label-proposta'>${opcao.label}</span>${textoAumento}`;
-            }
-        });
-
-        // Restaurar o radio selecionado pelo usuário
-        const selecionado = document.querySelector('input[name="gajOption"]:checked');
-        if (selecionado) selecionado.checked = true;
-        // Atualizar título do card SEMPRE fixo
-        const cardTitle = document.getElementById('gaj-card-title');
-        cardTitle.textContent = 'Propostas de reajustes';
-        // Se quiser, pode exibir um subtítulo dinâmico abaixo dos botões, mas não alterar o título principal
-
-        document.getElementById('resultado-atual').innerHTML = formatResults(resultsAtual);
-        document.getElementById('resultado-gaj-conteudo').innerHTML = formatResults(calculateGajMajorada(inputs));
+        
+        const resultadoAtualElement = document.getElementById('resultado-atual');
+        const resultadoGajElement = document.getElementById('resultado-gaj-conteudo');
+        
+        if (resultadoAtualElement) {
+            resultadoAtualElement.innerHTML = formatResults(resultsAtual);
+        }
+        
+        if (resultadoGajElement) {
+            resultadoGajElement.innerHTML = formatResultsComparativoPropostas(inputs);
+        }
+        
     } catch (error) {
         console.error('Erro no cálculo:', error);
-        document.getElementById('resultado-atual').innerHTML = '<div style="color:red;font-weight:bold">Erro no cálculo:<br>' + error.message + '<br><pre>' + (error.stack || '') + '</pre></div>';
-        document.getElementById('resultado-gaj-conteudo').innerHTML = '<div style="color:red;font-weight:bold">Erro no cálculo:<br>' + error.message + '<br><pre>' + (error.stack || '') + '</pre></div>';
+        const resultadoAtualElement = document.getElementById('resultado-atual');
+        const resultadoGajElement = document.getElementById('resultado-gaj-conteudo');
+        
+        if (resultadoAtualElement) {
+            resultadoAtualElement.innerHTML = '<div style="color:red;font-weight:bold">Erro no cálculo:<br>' + error.message + '</div>';
+        }
+        if (resultadoGajElement) {
+            resultadoGajElement.innerHTML = '<div style="color:red;font-weight:bold">Erro no cálculo:<br>' + error.message + '</div>';
+        }
+    }
+}
+
+function updateContribuicoes() {
+    const funpresp = document.querySelector('input[name="funpresp"]:checked')?.value;
+    const patrocinadaGroup = document.getElementById('contribuicao-patrocinada-group');
+    const facultativaGroup = document.getElementById('contribuicao-facultativa-group');
+    
+    if (funpresp === 'sim') {
+        patrocinadaGroup.style.display = 'block';
+        facultativaGroup.style.display = 'block';
+    } else {
+        patrocinadaGroup.style.display = 'none';
+        facultativaGroup.style.display = 'none';
+        document.getElementById('contribuicaoPatrocinada').value = '0';
+        document.getElementById('contribuicaoFacultativa').value = '0';
+    }
+    calculateAndDisplay();
+}
+
+function updateAbonoPermanencia() {
+    const statusRadio = document.querySelector('input[name="status"]:checked');
+    const status = statusRadio ? statusRadio.value : 'ativo';
+    const abonoRadios = document.querySelectorAll('input[name="abonoPermanencia"]');
+    const abonoGroup = abonoRadios[0]?.closest('.form-group');
+    
+    if (status === 'ativo') {
+        abonoRadios.forEach(radio => {
+            radio.disabled = true;
+            if (radio.value === 'nao') radio.checked = true;
+        });
+        if (abonoGroup) abonoGroup.style.opacity = '0.5';
+    } else {
+        abonoRadios.forEach(radio => {
+            radio.disabled = false;
+        });
+        if (abonoGroup) abonoGroup.style.opacity = '1';
     }
 }
 
@@ -575,15 +716,20 @@ document.addEventListener('DOMContentLoaded', () => {
             radio.addEventListener('change', updateContribuicoes);
         });
 
-        // Adicionar listeners para os radio buttons da GAJ
+        document.querySelectorAll('input[name="status"]').forEach(radio => {
+            radio.addEventListener('change', () => {
+                updateAbonoPermanencia();
+                calculateAndDisplay();
+            });
+        });
+
         document.querySelectorAll('input[name="gajOption"]').forEach(radio => {
             radio.addEventListener('change', () => {
                 if (radio.checked) {
                     const gajValue = radio.value;
                     if (gajValue === 'apenas5') {
-                        // Modo: apenas 5% no vencimento
                         document.getElementById('apenasGajAumento').checked = true;
-                        document.getElementById('gajMajoradaPercent').value = '1.40'; // GAJ padrão 140%
+                        document.getElementById('gajMajoradaPercent').value = '1.65';
                     } else {
                         document.getElementById('apenasGajAumento').checked = false;
                         document.getElementById('gajMajoradaPercent').value = gajValue;
@@ -593,13 +739,12 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        // Selecionar primeira opção por padrão
         const firstRadio = document.querySelector('input[name="gajOption"]');
         if (firstRadio) {
             firstRadio.checked = true;
             if (firstRadio.value === 'apenas5') {
                 document.getElementById('apenasGajAumento').checked = true;
-                document.getElementById('gajMajoradaPercent').value = '1.40';
+                document.getElementById('gajMajoradaPercent').value = '1.65';
             } else {
                 document.getElementById('apenasGajAumento').checked = false;
                 document.getElementById('gajMajoradaPercent').value = firstRadio.value;
@@ -608,6 +753,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         updateFuncaoComissionada();
         updateContribuicoes();
+        updateAbonoPermanencia();
         calculateAndDisplay();
 
         document.addEventListener('change', calculateAndDisplay);
@@ -620,26 +766,4 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (error) {
         console.error('Erro na inicialização:', error);
     }
-});
-
-function updateContribuicoes() {
-    const regime = document.querySelector('input[name="funpresp"]:checked').value;
-    const patrocinada = document.getElementById('contribuicao-patrocinada-group');
-    const facultativa = document.getElementById('contribuicao-facultativa-group');
-    const selectPatrocinada = document.getElementById('contribuicaoPatrocinada');
-    const inputFacultativa = document.getElementById('contribuicaoFacultativa');
-    
-    if (regime === 'sim') {
-        patrocinada.style.display = '';
-        facultativa.style.display = '';
-    } else {
-        patrocinada.style.display = 'none';
-        facultativa.style.display = 'none';
-        // Zerar as contribuições quando voltar para RPPS
-        selectPatrocinada.value = '0';
-        inputFacultativa.value = '0';
-    }
-    calculateAndDisplay();
-}
-
-// ... (restante do JS do simulador, igual ao fornecido) ... 
+}); 
