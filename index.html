@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -118,6 +119,7 @@
             <label><input type="radio" name="abonoPermanencia" value="nao" checked> Não</label>
             <label><input type="radio" name="abonoPermanencia" value="sim"> Sim</label>
           </div>
+          <small style="color: #666; font-style: italic;">* Destinado apenas a aposentados</small>
         </div>
         <div class="form-group">
           <label>Outros Descontos:</label>
@@ -203,16 +205,19 @@
           </div>
         </div>
       </div>
+      <!-- Fim do bloco de valores principais -->
       <div class="results-section">
-        <div class="result-card">
+        <div class="result-card" style="display: none;">
           <h3>Situação Atual</h3>
           <div class="result-card-content" id="resultado-atual">
-            Preencha os dados para ver os resultados...
+            Líquido:    R$ 1.234,56    (+14.7%)
+            Bruto:      R$ 2.345,67    (+18.4%)
           </div>
         </div>
         <div class="result-card">
           <h3 id="gaj-card-title">Propostas de reajustes</h3>
-          <div class="gaj-select-container">
+          <div id="tabela-proventos-propostas" class="tabela-proventos-propostas"></div>
+          <div class="gaj-select-container" style="display: none;">
             <div>
               <input type="radio" name="gajOption" id="gaj165" value="1.65" checked>
               <label for="gaj165">GAJ 165% + 5% no vencimento + Novo AQ</label>
@@ -234,7 +239,7 @@
             <option value="1.65">165%</option>
             <option value="1.40">140%</option>
           </select>
-          <div class="result-card-content" id="resultado-gaj-conteudo">
+          <div class="result-card-content quadro-propostas" id="resultado-gaj-conteudo">
             <div id="resultado-gaj-conteudo-inner">
               Preencha os dados para ver os resultados...
             </div>
