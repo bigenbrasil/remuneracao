@@ -230,7 +230,7 @@ function calculateSituacaoAtual(inputs) {
         descontos[`Contribuição Facultativa (${contribuicaoFacultativa}%)`] = contribFacultativa;
     }
 
-    if (abonoPermanencia === 'sim' && status === 'aposentado') {
+    if (abonoPermanencia === 'sim' && status === 'ativo') {
         proventos['Abono de Permanência'] = pss;
         baseCalculoIRPF += pss;
     }
@@ -425,7 +425,7 @@ function calculateGajMajorada(inputs, gajOptionValue = null) {
         descontos[`Contribuição Facultativa (${contribuicaoFacultativa}%)`] = contribFacultativa;
     }
 
-    if (abonoPermanencia === 'sim' && status === 'aposentado') {
+    if (abonoPermanencia === 'sim' && status === 'ativo') {
         proventos['Abono de Permanência'] = pss;
         baseCalculoIRPF += pss;
     }
@@ -617,7 +617,7 @@ function formatResultsComparativoPropostas(inputs) {
     
     // Líquido - Situação Atual
     const liquidoAtualFormatado = situacaoAtual.liquido.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-    html += `<td style='padding:12px 20px;text-align:right;font-weight:700;color:#1e3a8a;border-top:2px solid #3b82f6;border-bottom:2px solid #3b82f6;font-family:monospace;font-size:0.95em;'><div style='text-align:right;margin-bottom:4px;height:20px;line-height:20px;'>${liquidoAtualFormatado}</div><div style='text-align:right;font-size:0.8em;color:#1e3a8a;height:16px;line-height:16px;'>&nbsp;</div></td>`;
+    html += `<td style='padding:12px 20px;text-align:right;font-weight:700;color:#000000;border-top:2px solid #3b82f6;border-bottom:2px solid #3b82f6;font-family:monospace;font-size:0.95em;'><div style='text-align:right;margin-bottom:4px;height:20px;line-height:20px;'>${liquidoAtualFormatado}</div><div style='text-align:right;font-size:0.8em;color:#000000;height:16px;line-height:16px;'>&nbsp;</div></td>`;
     
     // Líquido - Propostas
     resultados.forEach((r, index) => {
@@ -689,7 +689,7 @@ function updateAbonoPermanencia() {
     const abonoRadios = document.querySelectorAll('input[name="abonoPermanencia"]');
     const abonoGroup = abonoRadios[0]?.closest('.form-group');
     
-    if (status === 'ativo') {
+    if (status === 'aposentado') {
         abonoRadios.forEach(radio => {
             radio.disabled = true;
             if (radio.value === 'nao') radio.checked = true;
